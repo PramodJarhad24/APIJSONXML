@@ -1,0 +1,14 @@
+.grid-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 300px 100px 300px 50px;
+}
+
+.grid-item{
+    border: 1px solid red;
+}
+
+#box1{
+    grid-column-start: 2;
+    grid-column-end: 4;
+}
