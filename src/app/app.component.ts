@@ -43,14 +43,10 @@ export class AppComponent  implements OnInit{
        });
      });
      let finalData = this.mergedData.sort(this.sortByID)
-   console.log("finalData")
-   console.log(finalData)
    });
  }
 
   sortByID(x:any,y:any) {
-    console.log("x = "+x.id)
-    console.log("y = "+y.id)
     return x.id - y.id; 
   }
 
