@@ -1,6 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserService } from './services/user.service';
 import * as xml2js from "xml2js";
+import { FormControl, FormGroup } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+
+import { Observable, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,28 +15,35 @@ export class AppComponent  implements OnInit{
   title = 'angulartest';
 
   mergedData:any = [];
-  jsondata = [];
+  jsondata:any = [];
+  websites = [
+    {value: '1', viewValue: 'aaa.com'},
+    {value: '2', viewValue: 'HDTuto.com'},
+    {value: '3', viewValue: 'bbb.com'}
+  ];
 
-  constructor(private userService:UserService){
-  }
-   ngOnInit(){
-     this.getJSONData();
-  }
+  dateRange = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl()
+  });
 
-  getJSONData(){
-    this.userService.getResponse1().subscribe((dataJSON:any) => {
-      this.jsondata = dataJSON.person; 
-      this.jsondata.forEach((element:any) => {
+  constructor(private userService:UserService,
+    private http: HttpClient){
+  }
+  
+  ngOnInit(){
+    let character = this.http.get("assets/mockData/response1.json");
+    let characterHomeworld = this.http.get("assets/mockData/response2.xml", { responseType: "text" });
+
+    forkJoin([character, characterHomeworld]).subscribe(results => {
+      
+      this.jsondata = results[0]; 
+      this.jsondata.person.forEach((element:any) => {
           this.mergedData.push(element);
       });
-      this.getXMLData();
-    });
- }
 
- getXMLData(){
-  this.userService.getResponse2().subscribe((data) => {
-    const p:xml2js.Parser = new xml2js.Parser();
-     p.parseString(data, (err:any, result:any) => {
+      const p:xml2js.Parser = new xml2js.Parser();
+     p.parseString(results[1], (err:any, result:any) => {
      result.persons.person.forEach((element:any) => {
            var item = {
              'id': parseInt(element.id[0]),
@@ -42,12 +53,18 @@ export class AppComponent  implements OnInit{
            this.mergedData.push(item);
        });
      });
-     let finalData = this.mergedData.sort(this.sortByID)
-   });
- }
+     this.mergedData.sort(this.sortByID);
+    });
+  }
 
+
+  
   sortByID(x:any,y:any) {
     return x.id - y.id; 
+  }
+
+  onSelectEvent(val:any){
+
   }
 
 }
