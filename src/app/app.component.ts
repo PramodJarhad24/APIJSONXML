@@ -32,10 +32,10 @@ export class AppComponent  implements OnInit{
   }
   
   ngOnInit(){
-    let character = this.http.get("assets/mockData/response1.json");
-    let characterHomeworld = this.http.get("assets/mockData/response2.xml", { responseType: "text" });
+    let json = this.http.get("assets/mockData/response1.json");
+    let xml = this.http.get("assets/mockData/response2.xml", { responseType: "text" });
 
-    forkJoin([character, characterHomeworld]).subscribe(results => {
+    forkJoin([json, xml]).subscribe(results => {
       
       this.jsondata = results[0]; 
       this.jsondata.person.forEach((element:any) => {
